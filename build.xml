@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<project name="addition" default="runjunit">
+    <target name="runjunit" depends="compile">
+        <mkdir dir="reports" />
+        <junit printsummary="true">
+            <test name="com.das.AdditionTest" />
+            <classpath>
+                <pathelement location="/Applications/IntelliJ IDEA 14 CE.app/Contents/lib/junit-4.11.jar" />
+                <pathelement location="out" />
+            </classpath>
+        </junit>
+        <junitreport todir="./reports">
+            <fileset dir="./reports">
+                <include name="TEST-*.xml"/>
+            </fileset>
+            <report format="frames" todir="./report/html"/>
+        </junitreport>
+    </target>
+    <target name="compile">
+        <javac srcdir="./src" destdir="out" includeantruntime="false" classpath="/Applications/IntelliJ IDEA 14 CE.app/Contents/lib/junit-4.11.jar"/>
+    </target>
+    <target name="package" depends="compile">
+        <jar destfile="addition.jar"
+             basedir="out"
+             includes="com/das/**"
+             excludes="**/Test" >
+            <manifest>
+                <attribute name="Main-Class" value="com.das.Addition" />
+            </manifest>
+        </jar>
+
+    </target>
+</project>
