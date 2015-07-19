@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="module_addition" default="compile.module.addition">
+  <dirname property="module.addition.basedir" file="${ant.file.module_addition}"/>
+  
+  <property name="module.jdk.home.addition" value="${project.jdk.home}"/>
+  <property name="module.jdk.bin.addition" value="${project.jdk.bin}"/>
+  <property name="module.jdk.classpath.addition" value="${project.jdk.classpath}"/>
+  
+  <property name="compiler.args.addition" value="-encoding UTF-8 -source 1.7 ${compiler.args}"/>
+  
+  <property name="addition.output.dir" value="${module.addition.basedir}/out/production/Addition"/>
+  <property name="addition.testoutput.dir" value="${module.addition.basedir}/out/test/Addition"/>
+  
+  <path id="addition.module.bootclasspath">
+    <!-- Paths to be included in compilation bootclasspath -->
+  </path>
+  
+  <path id="addition.module.production.classpath">
+    <path refid="${module.jdk.classpath.addition}"/>
+    <pathelement location="${idea.home}/lib/groovy-all-2.3.9.jar"/>
+    <pathelement location="${idea.home}/lib/hamcrest-core-1.3.jar"/>
+    <pathelement location="${idea.home}/lib/hamcrest-library-1.3.jar"/>
+    <pathelement location="${idea.home}/lib/junit-4.11.jar"/>
+  </path>
+  
+  <path id="addition.runtime.production.module.classpath">
+    <pathelement location="${addition.output.dir}"/>
+    <pathelement location="${idea.home}/lib/groovy-all-2.3.9.jar"/>
+    <pathelement location="${idea.home}/lib/hamcrest-core-1.3.jar"/>
+    <pathelement location="${idea.home}/lib/hamcrest-library-1.3.jar"/>
+    <pathelement location="${idea.home}/lib/junit-4.11.jar"/>
+  </path>
+  
+  <path id="addition.module.classpath">
+    <path refid="${module.jdk.classpath.addition}"/>
+    <pathelement location="${addition.output.dir}"/>
+    <pathelement location="${idea.home}/lib/groovy-all-2.3.9.jar"/>
+    <pathelement location="${idea.home}/lib/hamcrest-core-1.3.jar"/>
+    <pathelement location="${idea.home}/lib/hamcrest-library-1.3.jar"/>
+    <pathelement location="${idea.home}/lib/junit-4.11.jar"/>
+  </path>
+  
+  <path id="addition.runtime.module.classpath">
+    <pathelement location="${addition.testoutput.dir}"/>
+    <pathelement location="${addition.output.dir}"/>
+    <pathelement location="${idea.home}/lib/groovy-all-2.3.9.jar"/>
+    <pathelement location="${idea.home}/lib/hamcrest-core-1.3.jar"/>
+    <pathelement location="${idea.home}/lib/hamcrest-library-1.3.jar"/>
+    <pathelement location="${idea.home}/lib/junit-4.11.jar"/>
+  </path>
+  
+  
+  <patternset id="excluded.from.module.addition">
+    <patternset refid="ignored.files"/>
+  </patternset>
+  
+  <patternset id="excluded.from.compilation.addition">
+    <patternset refid="excluded.from.module.addition"/>
+  </patternset>
+  
+  <path id="addition.module.sourcepath">
+    <dirset dir="${module.addition.basedir}">
+      <include name="src/main"/>
+    </dirset>
+  </path>
+  
+  <path id="addition.module.test.sourcepath">
+    <dirset dir="${module.addition.basedir}">
+      <include name="src/tests"/>
+    </dirset>
+  </path>
+  
+  
+  <target name="compile.module.addition" depends="compile.module.addition.production,compile.module.addition.tests" description="Compile module Addition"/>
+  
+  <target name="compile.module.addition.production" depends="register.custom.compilers" description="Compile module Addition; production classes">
+    <mkdir dir="${addition.output.dir}"/>
+    <javac2 destdir="${addition.output.dir}" debug="${compiler.debug}" nowarn="${compiler.generate.no.warnings}" memorymaximumsize="${compiler.max.memory}" fork="true" executable="${module.jdk.bin.addition}/javac">
+      <compilerarg line="${compiler.args.addition}"/>
+      <bootclasspath refid="addition.module.bootclasspath"/>
+      <classpath refid="addition.module.production.classpath"/>
+      <src refid="addition.module.sourcepath"/>
+      <patternset refid="excluded.from.compilation.addition"/>
+    </javac2>
+    
+    <copy todir="${addition.output.dir}">
+      <fileset dir="${module.addition.basedir}/src/main">
+        <patternset refid="compiler.resources"/>
+        <type type="file"/>
+      </fileset>
+    </copy>
+  </target>
+  
+  <target name="compile.module.addition.tests" depends="register.custom.compilers,compile.module.addition.production" description="compile module Addition; test classes" unless="skip.tests">
+    <mkdir dir="${addition.testoutput.dir}"/>
+    <javac2 destdir="${addition.testoutput.dir}" debug="${compiler.debug}" nowarn="${compiler.generate.no.warnings}" memorymaximumsize="${compiler.max.memory}" fork="true" executable="${module.jdk.bin.addition}/javac">
+      <compilerarg line="${compiler.args.addition}"/>
+      <bootclasspath refid="addition.module.bootclasspath"/>
+      <classpath refid="addition.module.classpath"/>
+      <src refid="addition.module.test.sourcepath"/>
+      <patternset refid="excluded.from.compilation.addition"/>
+    </javac2>
+    
+    <copy todir="${addition.testoutput.dir}">
+      <fileset dir="${module.addition.basedir}/src/tests">
+        <patternset refid="compiler.resources"/>
+        <type type="file"/>
+      </fileset>
+    </copy>
+  </target>
+  
+  <target name="clean.module.addition" description="cleanup module">
+    <delete dir="${addition.output.dir}"/>
+    <delete dir="${addition.testoutput.dir}"/>
+  </target>
+</project>
